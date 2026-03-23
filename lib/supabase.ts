@@ -1,16 +1,14 @@
 import { createBrowserClient } from "@supabase/ssr";
 
+let client: ReturnType<typeof createBrowserClient> | null = null;
+
 export function createClient() {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    if (client) return client;
 
-    if (!supabaseUrl || !supabaseKey) {
-        // Fallback for build/SSG — will not be called at runtime
-        return createBrowserClient(
-            "https://placeholder.supabase.co",
-            "placeholder-key"
-        );
-    }
+    client = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
 
-    return createBrowserClient(supabaseUrl, supabaseKey);
+    return client;
 }
