@@ -10,6 +10,7 @@ import Lightbox from "@/components/Lightbox";
 import MasonryGrid from "@/components/MasonryGrid";
 import FileUpload from "@/components/FileUpload";
 import { HeroSkeleton, PhotoSkeleton } from "@/components/Skeleton";
+import { useGuest } from "@/components/GuestContext";
 
 export default function AlbumDetailPage() {
     const { id } = useParams();
@@ -22,6 +23,7 @@ export default function AlbumDetailPage() {
     const [lightboxIndex, setLightboxIndex] = useState(0);
     const [isDeleting, setIsDeleting] = useState(false);
     const supabase = createClient();
+    const { isGuest } = useGuest();
 
     const fetchAlbum = useCallback(async () => {
         try {
@@ -245,34 +247,36 @@ export default function AlbumDetailPage() {
                         </p>
                     )}
 
-                    <div className="flex items-center gap-3 flex-shrink-0">
-                        <button
-                            onClick={() => setShowUpload(!showUpload)}
-                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-espresso text-cream text-sm tracking-wider uppercase hover:bg-espresso/90 transition-colors"
-                        >
-                            <svg
-                                className="w-4 h-4"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
+                    {!isGuest && (
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                            <button
+                                onClick={() => setShowUpload(!showUpload)}
+                                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-espresso text-cream text-sm tracking-wider uppercase hover:bg-espresso/90 transition-colors"
                             >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={1.5}
-                                    d="M12 4v16m8-8H4"
-                                />
-                            </svg>
-                            Add Photos
-                        </button>
-                        <button
-                            onClick={handleDeleteAlbum}
-                            disabled={isDeleting}
-                            className="px-4 py-2.5 rounded-xl text-sm text-espresso/40 hover:text-red-500 hover:bg-red-50/50 transition-colors border-subtle disabled:opacity-50"
-                        >
-                            {isDeleting ? "Deleting..." : "Delete Album"}
-                        </button>
-                    </div>
+                                <svg
+                                    className="w-4 h-4"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={1.5}
+                                        d="M12 4v16m8-8H4"
+                                    />
+                                </svg>
+                                Add Photos
+                            </button>
+                            <button
+                                onClick={handleDeleteAlbum}
+                                disabled={isDeleting}
+                                className="px-4 py-2.5 rounded-xl text-sm text-espresso/40 hover:text-red-500 hover:bg-red-50/50 transition-colors border-subtle disabled:opacity-50"
+                            >
+                                {isDeleting ? "Deleting..." : "Delete Album"}
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 {/* Upload Section */}
@@ -297,8 +301,8 @@ export default function AlbumDetailPage() {
                         setLightboxIndex(index);
                         setLightboxOpen(true);
                     }}
-                    onSetCover={handleSetCover}
-                    onDelete={handleDeleteMedia}
+                    onSetCover={isGuest ? undefined : handleSetCover}
+                    onDelete={isGuest ? undefined : handleDeleteMedia}
                 />
             </div>
 

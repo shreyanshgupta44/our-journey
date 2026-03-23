@@ -6,11 +6,13 @@ import { createClient } from "@/lib/supabase";
 import { Album } from "@/types";
 import Navbar from "@/components/Navbar";
 import { AlbumCardSkeleton } from "@/components/Skeleton";
+import { useGuest } from "@/components/GuestContext";
 
 export default function AlbumsPage() {
     const [albums, setAlbums] = useState<Album[]>([]);
     const [loading, setLoading] = useState(true);
     const supabase = createClient();
+    const { isGuest } = useGuest();
 
     useEffect(() => {
         fetchAlbums();
@@ -83,12 +85,14 @@ export default function AlbumsPage() {
                         </p>
                         <h1 className="font-serif text-4xl md:text-5xl">All Albums</h1>
                     </div>
-                    <Link
-                        href="/albums/new"
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-espresso text-cream text-sm tracking-wider uppercase hover:bg-espresso/90 transition-colors"
-                    >
-                        <span>+</span> New Trip
-                    </Link>
+                    {!isGuest && (
+                        <Link
+                            href="/albums/new"
+                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-espresso text-cream text-sm tracking-wider uppercase hover:bg-espresso/90 transition-colors"
+                        >
+                            <span>+</span> New Trip
+                        </Link>
+                    )}
                 </div>
 
                 {/* Albums Grid */}
@@ -119,12 +123,14 @@ export default function AlbumsPage() {
                         <p className="text-sm text-espresso/40 mb-8">
                             Your journey starts with the first trip
                         </p>
-                        <Link
-                            href="/albums/new"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-espresso text-cream text-sm tracking-wider uppercase hover:bg-espresso/90 transition-colors"
-                        >
-                            <span>+</span> Create First Trip
-                        </Link>
+                        {!isGuest && (
+                            <Link
+                                href="/albums/new"
+                                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-espresso text-cream text-sm tracking-wider uppercase hover:bg-espresso/90 transition-colors"
+                            >
+                                <span>+</span> Create First Trip
+                            </Link>
+                        )}
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-stagger">

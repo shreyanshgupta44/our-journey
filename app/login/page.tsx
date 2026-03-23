@@ -9,6 +9,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [guestLoading, setGuestLoading] = useState(false);
     const router = useRouter();
     const supabase = createClient();
 
@@ -25,6 +26,25 @@ export default function LoginPage() {
         if (error) {
             setError(error.message);
             setLoading(false);
+            return;
+        }
+
+        router.push("/");
+        router.refresh();
+    };
+
+    const handleGuestLogin = async () => {
+        setError("");
+        setGuestLoading(true);
+
+        const { error } = await supabase.auth.signInWithPassword({
+            email: "guest@ourjourney.app",
+            password: "guestguest123",
+        });
+
+        if (error) {
+            setError("Guest login unavailable. Please try again later.");
+            setGuestLoading(false);
             return;
         }
 
@@ -95,7 +115,7 @@ export default function LoginPage() {
 
                         <button
                             type="submit"
-                            disabled={loading}
+                            disabled={loading || guestLoading}
                             className="w-full py-3.5 rounded-xl bg-espresso text-cream font-sans text-sm tracking-wider uppercase hover:bg-espresso/90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? (
@@ -108,6 +128,38 @@ export default function LoginPage() {
                             )}
                         </button>
                     </form>
+
+                    {/* Divider */}
+                    <div className="flex items-center gap-4 my-6">
+                        <div className="flex-1 h-px bg-espresso/10" />
+                        <span className="text-espresso/25 text-xs tracking-wider uppercase">or</span>
+                        <div className="flex-1 h-px bg-espresso/10" />
+                    </div>
+
+                    {/* Guest Login */}
+                    <button
+                        onClick={handleGuestLogin}
+                        disabled={loading || guestLoading}
+                        className="w-full py-3.5 rounded-xl border border-gold/30 text-espresso/60 font-sans text-sm tracking-wider uppercase hover:bg-gold/5 hover:border-gold/50 hover:text-espresso transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {guestLoading ? (
+                            <span className="flex items-center justify-center gap-2">
+                                <span className="w-4 h-4 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+                                Loading demo...
+                            </span>
+                        ) : (
+                            <span className="flex items-center justify-center gap-2">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                </svg>
+                                View as Guest
+                            </span>
+                        )}
+                    </button>
+                    <p className="text-center text-espresso/25 text-[11px] mt-3">
+                        Browse the app in read-only mode
+                    </p>
                 </div>
 
                 <p className="text-center text-espresso/20 text-xs mt-8 tracking-wider">

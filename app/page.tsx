@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase";
 import { Album, Media } from "@/types";
 import Navbar from "@/components/Navbar";
 import { AlbumCardSkeleton } from "@/components/Skeleton";
+import { useGuest } from "@/components/GuestContext";
 
 export default function HomePage() {
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -13,6 +14,7 @@ export default function HomePage() {
   const [totalPhotos, setTotalPhotos] = useState(0);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
+  const { isGuest } = useGuest();
 
   useEffect(() => {
     fetchData();
@@ -151,12 +153,14 @@ export default function HomePage() {
             <p className="text-sm text-espresso/40 mb-8">
               Start documenting your journey together
             </p>
-            <Link
-              href="/albums/new"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-espresso text-cream text-sm tracking-wider uppercase hover:bg-espresso/90 transition-colors"
-            >
-              <span>+</span> Create First Trip
-            </Link>
+            {!isGuest && (
+              <Link
+                href="/albums/new"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-espresso text-cream text-sm tracking-wider uppercase hover:bg-espresso/90 transition-colors"
+              >
+                <span>+</span> Create First Trip
+              </Link>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-stagger">
@@ -276,26 +280,28 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Floating New Trip Button */}
-      <Link
-        href="/albums/new"
-        className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-espresso text-cream shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center z-40 group"
-        title="New Trip"
-      >
-        <svg
-          className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+      {/* Floating New Trip Button — hidden for guests */}
+      {!isGuest && (
+        <Link
+          href="/albums/new"
+          className="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-espresso text-cream shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300 flex items-center justify-center z-40 group"
+          title="New Trip"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1.5}
-            d="M12 4v16m8-8H4"
-          />
-        </svg>
-      </Link>
+          <svg
+            className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+        </Link>
+      )}
     </>
   );
 }
