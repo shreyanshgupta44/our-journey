@@ -1,45 +1,45 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase";
 
 type GuestContextType = {
   isGuest: boolean;
+  enterGuestMode: () => void;
+  exitGuestMode: () => void;
 };
 
-const GuestContext = createContext<GuestContextType>({ isGuest: false });
+const GuestContext = createContext<GuestContextType>({
+  isGuest: false,
+  enterGuestMode: () => {},
+  exitGuestMode: () => {},
+});
 
 export function useGuest() {
   return useContext(GuestContext);
 }
 
-const GUEST_EMAIL = "guest@ourjourney.app";
+const GUEST_KEY = "our-journey-guest";
 
 export function GuestProvider({ children }: { children: React.ReactNode }) {
   const [isGuest, setIsGuest] = useState(false);
-  const supabase = createClient();
 
   useEffect(() => {
-    checkIfGuest();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsGuest(session?.user?.email === GUEST_EMAIL);
-    });
-
-    return () => subscription.unsubscribe();
+    // Check if guest mode was previously set
+    setIsGuest(sessionStorage.getItem(GUEST_KEY) === "true");
   }, []);
 
-  async function checkIfGuest() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    setIsGuest(user?.email === GUEST_EMAIL);
+  function enterGuestMode() {
+    sessionStorage.setItem(GUEST_KEY, "true");
+    setIsGuest(true);
+  }
+
+  function exitGuestMode() {
+    sessionStorage.removeItem(GUEST_KEY);
+    setIsGuest(false);
   }
 
   return (
-    <GuestContext.Provider value={{ isGuest }}>
+    <GuestContext.Provider value={{ isGuest, enterGuestMode, exitGuestMode }}>
       {children}
     </GuestContext.Provider>
   );

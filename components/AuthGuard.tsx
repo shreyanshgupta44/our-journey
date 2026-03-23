@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 
+const GUEST_KEY = "our-journey-guest";
+
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [isChecking, setIsChecking] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -12,6 +14,16 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
 
   useEffect(() => {
+    // Check guest mode first
+    if (typeof window !== "undefined" && sessionStorage.getItem(GUEST_KEY) === "true") {
+      setIsAuthenticated(true);
+      setIsChecking(false);
+      if (pathname === "/login") {
+        router.push("/");
+      }
+      return;
+    }
+
     checkAuth();
 
     const {
@@ -39,14 +51,12 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
     if (user) {
       setIsAuthenticated(true);
-      // If on login page and already authenticated, go to home
       if (pathname === "/login") {
         router.push("/");
         return;
       }
     } else {
       setIsAuthenticated(false);
-      // Not authenticated and not on login page → redirect
       if (pathname !== "/login") {
         router.push("/login");
         return;

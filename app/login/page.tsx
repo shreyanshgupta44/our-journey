@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
+import { useGuest } from "@/components/GuestContext";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -12,6 +13,7 @@ export default function LoginPage() {
     const [guestLoading, setGuestLoading] = useState(false);
     const router = useRouter();
     const supabase = createClient();
+    const { enterGuestMode } = useGuest();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -33,21 +35,9 @@ export default function LoginPage() {
         router.refresh();
     };
 
-    const handleGuestLogin = async () => {
-        setError("");
+    const handleGuestLogin = () => {
         setGuestLoading(true);
-
-        const { error } = await supabase.auth.signInWithPassword({
-            email: "guest@ourjourney.app",
-            password: "guestguest123",
-        });
-
-        if (error) {
-            setError("Guest login unavailable. Please try again later.");
-            setGuestLoading(false);
-            return;
-        }
-
+        enterGuestMode();
         router.push("/");
         router.refresh();
     };

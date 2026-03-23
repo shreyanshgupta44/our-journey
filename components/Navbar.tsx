@@ -3,14 +3,20 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
+import { useGuest } from "@/components/GuestContext";
 
 export default function Navbar() {
     const pathname = usePathname();
     const router = useRouter();
     const supabase = createClient();
+    const { isGuest, exitGuestMode } = useGuest();
 
     const handleLogout = async () => {
-        await supabase.auth.signOut();
+        if (isGuest) {
+            exitGuestMode();
+        } else {
+            await supabase.auth.signOut();
+        }
         router.push("/login");
     };
 
