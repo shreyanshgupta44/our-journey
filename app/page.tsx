@@ -7,6 +7,7 @@ import { Album, Media } from "@/types";
 import Navbar from "@/components/Navbar";
 import { AlbumCardSkeleton } from "@/components/Skeleton";
 import { useGuest } from "@/components/GuestContext";
+import { DEMO_ALBUMS, ALL_DEMO_MEDIA } from "@/lib/demo-data";
 
 export default function HomePage() {
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -17,8 +18,15 @@ export default function HomePage() {
   const { isGuest } = useGuest();
 
   useEffect(() => {
+    if (isGuest) {
+      setAlbums(DEMO_ALBUMS);
+      setRecentMedia(ALL_DEMO_MEDIA.slice(0, 10));
+      setTotalPhotos(ALL_DEMO_MEDIA.length);
+      setLoading(false);
+      return;
+    }
     fetchData();
-  }, []);
+  }, [isGuest]);
 
   async function fetchData() {
     try {

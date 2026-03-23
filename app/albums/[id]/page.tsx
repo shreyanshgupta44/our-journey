@@ -11,6 +11,7 @@ import MasonryGrid from "@/components/MasonryGrid";
 import FileUpload from "@/components/FileUpload";
 import { HeroSkeleton, PhotoSkeleton } from "@/components/Skeleton";
 import { useGuest } from "@/components/GuestContext";
+import { DEMO_ALBUMS, DEMO_MEDIA } from "@/lib/demo-data";
 
 export default function AlbumDetailPage() {
     const { id } = useParams();
@@ -55,8 +56,22 @@ export default function AlbumDetailPage() {
     }, [id]);
 
     useEffect(() => {
+        if (isGuest) {
+            // Guest mode: load demo data
+            const idStr = id as string;
+            const demoAlbum = DEMO_ALBUMS.find((a) => a.id === idStr);
+            if (demoAlbum) {
+                setAlbum(demoAlbum);
+                setMedia(DEMO_MEDIA[idStr] || []);
+            } else {
+                // Guest trying to access a real album — redirect
+                router.push("/albums");
+            }
+            setLoading(false);
+            return;
+        }
         fetchAlbum();
-    }, [fetchAlbum]);
+    }, [isGuest, id, fetchAlbum, router]);
 
     const handleSetCover = async (url: string) => {
         const { error } = await supabase

@@ -7,6 +7,7 @@ import { Album } from "@/types";
 import Navbar from "@/components/Navbar";
 import { AlbumCardSkeleton } from "@/components/Skeleton";
 import { useGuest } from "@/components/GuestContext";
+import { DEMO_ALBUMS } from "@/lib/demo-data";
 
 export default function AlbumsPage() {
     const [albums, setAlbums] = useState<Album[]>([]);
@@ -15,8 +16,13 @@ export default function AlbumsPage() {
     const { isGuest } = useGuest();
 
     useEffect(() => {
+        if (isGuest) {
+            setAlbums(DEMO_ALBUMS);
+            setLoading(false);
+            return;
+        }
         fetchAlbums();
-    }, []);
+    }, [isGuest]);
 
     async function fetchAlbums() {
         try {
