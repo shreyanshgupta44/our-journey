@@ -87,21 +87,35 @@ export default function AlbumDetailPage() {
     };
 
     const handleDeleteAlbum = async () => {
-        if (!confirm("Delete this entire album and all its photos? This cannot be undone.")) return;
+        const confirmed = window.confirm("Delete this entire album and all its photos? This cannot be undone.");
+        if (!confirmed) return;
 
         setIsDeleting(true);
 
-        // Delete all media files from storage
-        for (const item of media) {
-            const urlParts = item.url.split("/travel-media/");
-            const filePath = urlParts[urlParts.length - 1];
-            await supabase.storage.from("travel-media").remove([filePath]);
+        try {
+            // Delete all media files from storage
+            for (const item of media) {
+                const urlParts = item.url.split("/travel-media/");
+                const filePath = urlParts[urlParts.length - 1];
+                if (filePath) {
+                    await supabase.storage.from("travel-media").remove([filePath]);
+                }
+            }
+
+            // Delete album (cascades to media records)
+            const { error } = await supabase.from("albums").delete().eq("id", id);
+
+            if (error) {
+                alert("Failed to delete album: " + error.message);
+                setIsDeleting(false);
+                return;
+            }
+
+            router.push("/albums");
+        } catch (err) {
+            alert("Error deleting album: " + String(err));
+            setIsDeleting(false);
         }
-
-        // Delete album (cascades to media records)
-        await supabase.from("albums").delete().eq("id", id);
-
-        router.push("/albums");
     };
 
     const formatDateRange = (from: string | null, to: string | null) => {
