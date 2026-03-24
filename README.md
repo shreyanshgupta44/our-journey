@@ -1,6 +1,6 @@
-<![CDATA[# ✦ Our Journey — A Love Story in Places
+# Our Journey — A Private Travel Photo Album
 
-A private, luxury-styled couples travel photo album web app. Document every sunset, every road walked, and every memory shared — beautifully.
+A full-stack travel photo and video album web application with authentication, cloud storage, drag-and-drop uploads, and a guest demo mode. Built with a warm, editorial design aesthetic.
 
 ![Next.js](https://img.shields.io/badge/Next.js_14-black?style=for-the-badge&logo=next.js)
 ![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)
@@ -8,86 +8,85 @@ A private, luxury-styled couples travel photo album web app. Document every suns
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Vercel-000?style=for-the-badge&logo=vercel)
 
-🔗 **Live Demo:** [our-journey-hazel.vercel.app](https://our-journey-hazel.vercel.app) — click **"View as Guest"** to explore
+**Live Demo:** [our-journey-hazel.vercel.app](https://our-journey-hazel.vercel.app) — click **"View as Guest"** to explore
 
 ---
 
-## ✨ Features
+## Features
 
-### Core Functionality
-- **🔐 Private Authentication** — Email/password login via Supabase Auth, only 2 users (you & your partner)
-- **📸 Trip Albums** — Create albums for each trip with destination, dates, description & cover photo
-- **🖼️ Photo & Video Uploads** — Drag-and-drop upload with real-time progress bars
-- **🔍 Full-Screen Lightbox** — View media in a cinematic lightbox with keyboard navigation (←/→/Esc)
-- **🧱 Masonry Grid** — Pinterest-style photo layout with responsive columns
-- **🎯 Album Management** — Set cover photos, delete media, remove entire albums
+### Core
+- **Authentication** — Email/password login via Supabase Auth with protected routes
+- **Trip Albums** — Create, view, and delete albums with destination, dates, description, and cover photos
+- **Media Uploads** — Drag-and-drop photo and video upload with real-time progress tracking
+- **Lightbox Viewer** — Full-screen media viewer with keyboard navigation (arrow keys, Escape)
+- **Masonry Grid** — Responsive Pinterest-style layout using CSS columns
+- **Album Management** — Set cover photos, delete individual media, or remove entire albums with cascade
 
-### Guest Mode (for Portfolio Showcase)
-- **👁️ View as Guest** — One-click guest access, no account needed
-- **🔒 Read-Only** — Guests see demo albums (Santorini, Tokyo, Paris) with sample photos
-- **🛡️ Privacy** — Your real photos are never visible to guests
-- **🚫 No Write Access** — Upload, delete, and edit buttons are hidden for guests
+### Guest Demo Mode
+- **One-Click Access** — No account required, uses a browser cookie for session
+- **Read-Only** — Guests see sample demo albums with Unsplash photos
+- **Privacy** — Real user data is never exposed to guest sessions
+- **Hidden Controls** — Upload, delete, and edit actions are conditionally hidden
 
-### Design & UX
-- **📰 Editorial Aesthetic** — Warm, luxury travel magazine feel
-- **🎨 Custom Palette** — Espresso, cream, gold, and sand tones
-- **✒️ Premium Typography** — Cormorant Garamond (serif) + DM Sans (sans-serif)
-- **💫 Micro-Animations** — Smooth fade-ins, hover lifts, and staggered reveals
-- **📱 Fully Responsive** — Beautiful on desktop, tablet, and mobile
+### Design
+- **Editorial Aesthetic** — Warm color palette (espresso, cream, gold, sand)
+- **Premium Typography** — Cormorant Garamond (serif) + DM Sans (sans-serif) via Google Fonts
+- **Micro-Animations** — Fade-ins, hover lifts, staggered reveals, glass-effect navbar
+- **Responsive** — Fully responsive across desktop, tablet, and mobile
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| **Framework** | Next.js 14 (App Router) |
-| **Language** | TypeScript |
-| **Styling** | Tailwind CSS |
-| **Auth & Database** | Supabase (Auth, PostgreSQL, Storage) |
-| **Deployment** | Vercel |
-| **Fonts** | Google Fonts (Cormorant Garamond, DM Sans) |
+| Framework | Next.js 14 (App Router) |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| Auth & Database | Supabase (Auth, PostgreSQL, Storage) |
+| Deployment | Vercel |
+| Fonts | Google Fonts (Cormorant Garamond, DM Sans) |
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 our-journey/
 ├── app/
-│   ├── layout.tsx          # Root layout with fonts + AuthGuard + GuestProvider
-│   ├── page.tsx            # Home — hero section, album grid, recent memories
-│   ├── login/page.tsx      # Login page with guest mode button
+│   ├── layout.tsx            # Root layout with AuthGuard + GuestProvider
+│   ├── page.tsx              # Home — hero, album grid, recent memories
+│   ├── login/page.tsx        # Login page with guest mode button
 │   └── albums/
-│       ├── page.tsx        # All albums grid
-│       ├── new/page.tsx    # Create new trip album
-│       └── [id]/page.tsx   # Album detail — masonry grid, lightbox, uploads
+│       ├── page.tsx          # Albums list
+│       ├── new/page.tsx      # Create new album
+│       └── [id]/page.tsx     # Album detail — masonry grid, lightbox, uploads
 ├── components/
-│   ├── AuthGuard.tsx       # Client-side auth wrapper (supports guest cookies)
-│   ├── GuestContext.tsx    # Guest mode context (cookie-based)
-│   ├── Navbar.tsx          # Sticky navigation with glass effect
-│   ├── Lightbox.tsx        # Full-screen media viewer
-│   ├── MasonryGrid.tsx     # CSS columns masonry layout
-│   ├── FileUpload.tsx      # Drag-and-drop uploader with progress
-│   └── Skeleton.tsx        # Loading skeleton components
+│   ├── AuthGuard.tsx         # Client-side auth wrapper (cookie-based guest support)
+│   ├── GuestContext.tsx      # Guest mode context provider
+│   ├── Navbar.tsx            # Sticky navigation with glass effect
+│   ├── Lightbox.tsx          # Full-screen media viewer
+│   ├── MasonryGrid.tsx       # CSS columns masonry layout
+│   ├── FileUpload.tsx        # Drag-and-drop uploader with progress bars
+│   └── Skeleton.tsx          # Loading skeleton components
 ├── lib/
-│   ├── supabase.ts         # Browser Supabase client
-│   ├── supabase-server.ts  # Server-side Supabase client
-│   └── demo-data.ts        # Demo albums & photos for guest mode
-├── types/index.ts          # TypeScript interfaces
-└── middleware.ts           # Auth middleware (Supabase + guest cookie check)
+│   ├── supabase.ts           # Browser Supabase client
+│   ├── supabase-server.ts    # Server-side Supabase client (cookies)
+│   └── demo-data.ts          # Sample albums and photos for guest mode
+├── types/index.ts            # TypeScript interfaces (Album, Media)
+└── middleware.ts             # Route protection (Supabase auth + guest cookie)
 ```
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 18+
 - npm
-- A [Supabase](https://supabase.com) account (free tier works)
+- [Supabase](https://supabase.com) account (free tier)
 
-### 1. Clone & Install
+### 1. Clone and Install
 
 ```bash
 git clone https://github.com/shreyanshgupta44/our-journey.git
@@ -95,9 +94,9 @@ cd our-journey
 npm install
 ```
 
-### 2. Set Up Supabase
+### 2. Supabase Setup
 
-Create a new project at [supabase.com](https://supabase.com), then run this SQL in the **SQL Editor**:
+Create a project at [supabase.com](https://supabase.com), then run this SQL in the **SQL Editor**:
 
 ```sql
 -- Albums table
@@ -122,11 +121,10 @@ CREATE TABLE media (
   uploaded_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Enable RLS
+-- Row Level Security
 ALTER TABLE albums ENABLE ROW LEVEL SECURITY;
 ALTER TABLE media ENABLE ROW LEVEL SECURITY;
 
--- Policies for authenticated users
 CREATE POLICY "auth_select_albums" ON albums FOR SELECT TO authenticated USING (true);
 CREATE POLICY "auth_insert_albums" ON albums FOR INSERT TO authenticated WITH CHECK (true);
 CREATE POLICY "auth_update_albums" ON albums FOR UPDATE TO authenticated USING (true);
@@ -137,44 +135,35 @@ CREATE POLICY "auth_insert_media" ON media FOR INSERT TO authenticated WITH CHEC
 CREATE POLICY "auth_delete_media" ON media FOR DELETE TO authenticated USING (true);
 ```
 
-### 3. Set Up Storage
+### 3. Storage Bucket
 
-In Supabase Dashboard → **Storage** → **New Bucket**:
-- Name: `travel-media`
-- Public: ✅ Yes
-
-Add these **Storage Policies** for `travel-media`:
+In Supabase Dashboard, go to **Storage** and create a public bucket named `travel-media`, then add these policies:
 
 ```sql
--- Allow authenticated uploads
-CREATE POLICY "auth_upload" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'travel-media');
--- Allow public reads
-CREATE POLICY "public_read" ON storage.objects FOR SELECT USING (bucket_id = 'travel-media');
--- Allow authenticated deletes
-CREATE POLICY "auth_delete" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'travel-media');
+CREATE POLICY "auth_upload" ON storage.objects FOR INSERT TO authenticated
+  WITH CHECK (bucket_id = 'travel-media');
+CREATE POLICY "public_read" ON storage.objects FOR SELECT
+  USING (bucket_id = 'travel-media');
+CREATE POLICY "auth_delete" ON storage.objects FOR DELETE TO authenticated
+  USING (bucket_id = 'travel-media');
 ```
 
-### 4. Create User Accounts
+### 4. Environment Variables
 
-In Supabase → **Authentication** → **Users** → **Add User**:
-- Create 2 accounts (you & your partner)
-- Check "Auto Confirm User"
+Create `.env.local` in the project root:
 
-### 5. Configure Environment
-
-```bash
-cp .env.local.example .env.local
-```
-
-Edit `.env.local`:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-Find these in Supabase → **Settings** → **API**
+Find these values in Supabase **Settings > API**.
 
-### 6. Run Locally
+### 5. Create Users
+
+In Supabase **Authentication > Users > Add User**, create your accounts with "Auto Confirm User" checked.
+
+### 6. Run
 
 ```bash
 npm run dev
@@ -184,48 +173,35 @@ Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 🌐 Deploy to Vercel
+## Deployment
 
 1. Push to GitHub
-2. Go to [vercel.com](https://vercel.com) → **New Project** → Import your repo
-3. Add environment variables:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-4. Click **Deploy**
+2. Go to [vercel.com](https://vercel.com) > **New Project** > Import your repo
+3. Add environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
+4. Deploy
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
-┌─────────────────────────────────────────────────┐
-│                   Vercel (CDN)                   │
-│  ┌──────────┐  ┌───────────┐  ┌──────────────┐  │
-│  │ Next.js  │  │ Middleware │  │  Static +    │  │
-│  │ App      │──│ (Auth +   │──│  Dynamic     │  │
-│  │ Router   │  │  Guest)   │  │  Rendering   │  │
-│  └────┬─────┘  └───────────┘  └──────────────┘  │
-└───────┼──────────────────────────────────────────┘
-        │
-┌───────▼──────────────────────────────────────────┐
-│                 Supabase Cloud                    │
-│  ┌──────────┐  ┌───────────┐  ┌──────────────┐  │
-│  │   Auth   │  │ PostgreSQL│  │   Storage    │  │
-│  │ (Email/  │  │ (Albums + │  │ (Photos +   │  │
-│  │  Pass)   │  │  Media)   │  │  Videos)    │  │
-│  └──────────┘  └───────────┘  └──────────────┘  │
-└──────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│                Vercel (CDN)                   │
+│  Next.js App Router + Middleware (Auth/Guest) │
+└──────────────────┬───────────────────────────┘
+                   │
+┌──────────────────▼───────────────────────────┐
+│              Supabase Cloud                   │
+│  ┌─────────┐  ┌───────────┐  ┌────────────┐  │
+│  │  Auth   │  │ PostgreSQL│  │  Storage   │  │
+│  │ (Email) │  │ (Albums,  │  │ (Photos,  │  │
+│  │         │  │  Media)   │  │  Videos)  │  │
+│  └─────────┘  └───────────┘  └────────────┘  │
+└──────────────────────────────────────────────┘
 ```
 
 ---
 
-## 📄 License
+## License
 
-This project is for personal use. Feel free to fork and customize for your own relationship! 💕
-
----
-
-<p align="center">
-  <i>Built with ❤️ for documenting love stories, one trip at a time.</i>
-</p>
-]]>
+MIT
