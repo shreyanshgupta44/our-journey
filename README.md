@@ -1,121 +1,231 @@
-# Our Journey ✦
+<![CDATA[# ✦ Our Journey — A Love Story in Places
 
-A private couples travel photo & video album — built with Next.js 14, Tailwind CSS, and Supabase.
+A private, luxury-styled couples travel photo album web app. Document every sunset, every road walked, and every memory shared — beautifully.
 
-> *"Every road we walked, every sunset we shared."*
+![Next.js](https://img.shields.io/badge/Next.js_14-black?style=for-the-badge&logo=next.js)
+![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000?style=for-the-badge&logo=vercel)
+
+🔗 **Live Demo:** [our-journey-hazel.vercel.app](https://our-journey-hazel.vercel.app) — click **"View as Guest"** to explore
 
 ---
 
-## Getting Started
+## ✨ Features
 
-### 1. Install Dependencies
+### Core Functionality
+- **🔐 Private Authentication** — Email/password login via Supabase Auth, only 2 users (you & your partner)
+- **📸 Trip Albums** — Create albums for each trip with destination, dates, description & cover photo
+- **🖼️ Photo & Video Uploads** — Drag-and-drop upload with real-time progress bars
+- **🔍 Full-Screen Lightbox** — View media in a cinematic lightbox with keyboard navigation (←/→/Esc)
+- **🧱 Masonry Grid** — Pinterest-style photo layout with responsive columns
+- **🎯 Album Management** — Set cover photos, delete media, remove entire albums
+
+### Guest Mode (for Portfolio Showcase)
+- **👁️ View as Guest** — One-click guest access, no account needed
+- **🔒 Read-Only** — Guests see demo albums (Santorini, Tokyo, Paris) with sample photos
+- **🛡️ Privacy** — Your real photos are never visible to guests
+- **🚫 No Write Access** — Upload, delete, and edit buttons are hidden for guests
+
+### Design & UX
+- **📰 Editorial Aesthetic** — Warm, luxury travel magazine feel
+- **🎨 Custom Palette** — Espresso, cream, gold, and sand tones
+- **✒️ Premium Typography** — Cormorant Garamond (serif) + DM Sans (sans-serif)
+- **💫 Micro-Animations** — Smooth fade-ins, hover lifts, and staggered reveals
+- **📱 Fully Responsive** — Beautiful on desktop, tablet, and mobile
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| **Framework** | Next.js 14 (App Router) |
+| **Language** | TypeScript |
+| **Styling** | Tailwind CSS |
+| **Auth & Database** | Supabase (Auth, PostgreSQL, Storage) |
+| **Deployment** | Vercel |
+| **Fonts** | Google Fonts (Cormorant Garamond, DM Sans) |
+
+---
+
+## 📁 Project Structure
+
+```
+our-journey/
+├── app/
+│   ├── layout.tsx          # Root layout with fonts + AuthGuard + GuestProvider
+│   ├── page.tsx            # Home — hero section, album grid, recent memories
+│   ├── login/page.tsx      # Login page with guest mode button
+│   └── albums/
+│       ├── page.tsx        # All albums grid
+│       ├── new/page.tsx    # Create new trip album
+│       └── [id]/page.tsx   # Album detail — masonry grid, lightbox, uploads
+├── components/
+│   ├── AuthGuard.tsx       # Client-side auth wrapper (supports guest cookies)
+│   ├── GuestContext.tsx    # Guest mode context (cookie-based)
+│   ├── Navbar.tsx          # Sticky navigation with glass effect
+│   ├── Lightbox.tsx        # Full-screen media viewer
+│   ├── MasonryGrid.tsx     # CSS columns masonry layout
+│   ├── FileUpload.tsx      # Drag-and-drop uploader with progress
+│   └── Skeleton.tsx        # Loading skeleton components
+├── lib/
+│   ├── supabase.ts         # Browser Supabase client
+│   ├── supabase-server.ts  # Server-side Supabase client
+│   └── demo-data.ts        # Demo albums & photos for guest mode
+├── types/index.ts          # TypeScript interfaces
+└── middleware.ts           # Auth middleware (Supabase + guest cookie check)
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+
+- npm
+- A [Supabase](https://supabase.com) account (free tier works)
+
+### 1. Clone & Install
 
 ```bash
+git clone https://github.com/shreyanshgupta44/our-journey.git
 cd our-journey
 npm install
 ```
 
 ### 2. Set Up Supabase
 
-Create a [Supabase project](https://supabase.com) and add your credentials to `.env.local`:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
-```
-
-### 3. Create Database Tables
-
-Run this SQL in the Supabase SQL Editor:
+Create a new project at [supabase.com](https://supabase.com), then run this SQL in the **SQL Editor**:
 
 ```sql
 -- Albums table
-create table albums (
-  id uuid default gen_random_uuid() primary key,
-  name text not null,
-  destination text,
-  date_from date,
-  date_to date,
-  description text,
-  cover_url text,
-  created_at timestamp default now()
+CREATE TABLE albums (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  destination TEXT,
+  date_from DATE,
+  date_to DATE,
+  description TEXT,
+  cover_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Media table
-create table media (
-  id uuid default gen_random_uuid() primary key,
-  album_id uuid references albums(id) on delete cascade,
-  url text not null,
-  type text check (type in ('image', 'video')),
-  filename text,
-  uploaded_at timestamp default now()
+CREATE TABLE media (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  album_id UUID REFERENCES albums(id) ON DELETE CASCADE,
+  url TEXT NOT NULL,
+  type TEXT CHECK (type IN ('image', 'video')) DEFAULT 'image',
+  filename TEXT,
+  uploaded_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Enable Row Level Security
-alter table albums enable row level security;
-alter table media enable row level security;
+-- Enable RLS
+ALTER TABLE albums ENABLE ROW LEVEL SECURITY;
+ALTER TABLE media ENABLE ROW LEVEL SECURITY;
 
--- Policies: Only authenticated users can do anything
-create policy "Authenticated users can read albums"
-  on albums for select to authenticated using (true);
+-- Policies for authenticated users
+CREATE POLICY "auth_select_albums" ON albums FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_insert_albums" ON albums FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "auth_update_albums" ON albums FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "auth_delete_albums" ON albums FOR DELETE TO authenticated USING (true);
 
-create policy "Authenticated users can insert albums"
-  on albums for insert to authenticated with check (true);
-
-create policy "Authenticated users can update albums"
-  on albums for update to authenticated using (true);
-
-create policy "Authenticated users can delete albums"
-  on albums for delete to authenticated using (true);
-
-create policy "Authenticated users can read media"
-  on media for select to authenticated using (true);
-
-create policy "Authenticated users can insert media"
-  on media for insert to authenticated with check (true);
-
-create policy "Authenticated users can delete media"
-  on media for delete to authenticated using (true);
+CREATE POLICY "auth_select_media" ON media FOR SELECT TO authenticated USING (true);
+CREATE POLICY "auth_insert_media" ON media FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "auth_delete_media" ON media FOR DELETE TO authenticated USING (true);
 ```
 
-### 4. Create Storage Bucket
+### 3. Set Up Storage
 
-In Supabase Dashboard → Storage:
-1. Create a new bucket called `travel-media`
-2. Set it to **Public**
-3. Add a policy allowing authenticated users to upload/delete
+In Supabase Dashboard → **Storage** → **New Bucket**:
+- Name: `travel-media`
+- Public: ✅ Yes
 
-### 5. Create User Accounts
+Add these **Storage Policies** for `travel-media`:
 
-In Supabase Dashboard → Authentication → Users:
-- Create 2 email/password accounts (one for each of you)
+```sql
+-- Allow authenticated uploads
+CREATE POLICY "auth_upload" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'travel-media');
+-- Allow public reads
+CREATE POLICY "public_read" ON storage.objects FOR SELECT USING (bucket_id = 'travel-media');
+-- Allow authenticated deletes
+CREATE POLICY "auth_delete" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'travel-media');
+```
 
-### 6. Run the App
+### 4. Create User Accounts
+
+In Supabase → **Authentication** → **Users** → **Add User**:
+- Create 2 accounts (you & your partner)
+- Check "Auto Confirm User"
+
+### 5. Configure Environment
+
+```bash
+cp .env.local.example .env.local
+```
+
+Edit `.env.local`:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Find these in Supabase → **Settings** → **API**
+
+### 6. Run Locally
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — you'll be redirected to the login page.
+Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## Deployment (Vercel)
+## 🌐 Deploy to Vercel
 
 1. Push to GitHub
-2. Import to [Vercel](https://vercel.com)
-3. Add environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`)
-4. Deploy ✨
+2. Go to [vercel.com](https://vercel.com) → **New Project** → Import your repo
+3. Add environment variables:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+4. Click **Deploy**
 
 ---
 
-## Tech Stack
+## 🏗️ Architecture
 
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 14 (App Router) |
-| Styling | Tailwind CSS |
-| Database | Supabase (PostgreSQL) |
-| Storage | Supabase Storage |
-| Auth | Supabase Auth (email/password) |
-| Hosting | Vercel |
+```
+┌─────────────────────────────────────────────────┐
+│                   Vercel (CDN)                   │
+│  ┌──────────┐  ┌───────────┐  ┌──────────────┐  │
+│  │ Next.js  │  │ Middleware │  │  Static +    │  │
+│  │ App      │──│ (Auth +   │──│  Dynamic     │  │
+│  │ Router   │  │  Guest)   │  │  Rendering   │  │
+│  └────┬─────┘  └───────────┘  └──────────────┘  │
+└───────┼──────────────────────────────────────────┘
+        │
+┌───────▼──────────────────────────────────────────┐
+│                 Supabase Cloud                    │
+│  ┌──────────┐  ┌───────────┐  ┌──────────────┐  │
+│  │   Auth   │  │ PostgreSQL│  │   Storage    │  │
+│  │ (Email/  │  │ (Albums + │  │ (Photos +   │  │
+│  │  Pass)   │  │  Media)   │  │  Videos)    │  │
+│  └──────────┘  └───────────┘  └──────────────┘  │
+└──────────────────────────────────────────────────┘
+```
+
+---
+
+## 📄 License
+
+This project is for personal use. Feel free to fork and customize for your own relationship! 💕
+
+---
+
+<p align="center">
+  <i>Built with ❤️ for documenting love stories, one trip at a time.</i>
+</p>
+]]>
