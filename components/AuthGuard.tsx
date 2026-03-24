@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 
-const GUEST_KEY = "our-journey-guest";
+function isGuestMode(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.cookie.split(";").some((c) => c.trim() === "guest-mode=true");
+}
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [isChecking, setIsChecking] = useState(true);
@@ -14,8 +17,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
 
   useEffect(() => {
-    // Check guest mode first
-    if (typeof window !== "undefined" && sessionStorage.getItem(GUEST_KEY) === "true") {
+    // Check guest mode first (uses cookie)
+    if (isGuestMode()) {
       setIsAuthenticated(true);
       setIsChecking(false);
       if (pathname === "/login") {

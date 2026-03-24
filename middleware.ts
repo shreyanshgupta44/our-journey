@@ -10,6 +10,18 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
+    // Guest mode: allow through without auth
+    const isGuest = request.cookies.get("guest-mode")?.value === "true";
+    if (isGuest) {
+        // If guest is on login page, redirect to home
+        if (request.nextUrl.pathname.startsWith("/login")) {
+            const url = request.nextUrl.clone();
+            url.pathname = "/";
+            return NextResponse.redirect(url);
+        }
+        return NextResponse.next();
+    }
+
     let supabaseResponse = NextResponse.next({
         request,
     });

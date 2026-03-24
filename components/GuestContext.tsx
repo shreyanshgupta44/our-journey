@@ -18,23 +18,32 @@ export function useGuest() {
   return useContext(GuestContext);
 }
 
-const GUEST_KEY = "our-journey-guest";
+function setGuestCookie(value: boolean) {
+  if (value) {
+    document.cookie = "guest-mode=true; path=/; max-age=86400; SameSite=Lax";
+  } else {
+    document.cookie = "guest-mode=; path=/; max-age=0; SameSite=Lax";
+  }
+}
+
+function getGuestCookie(): boolean {
+  return document.cookie.split(";").some((c) => c.trim() === "guest-mode=true");
+}
 
 export function GuestProvider({ children }: { children: React.ReactNode }) {
   const [isGuest, setIsGuest] = useState(false);
 
   useEffect(() => {
-    // Check if guest mode was previously set
-    setIsGuest(sessionStorage.getItem(GUEST_KEY) === "true");
+    setIsGuest(getGuestCookie());
   }, []);
 
   function enterGuestMode() {
-    sessionStorage.setItem(GUEST_KEY, "true");
+    setGuestCookie(true);
     setIsGuest(true);
   }
 
   function exitGuestMode() {
-    sessionStorage.removeItem(GUEST_KEY);
+    setGuestCookie(false);
     setIsGuest(false);
   }
 
