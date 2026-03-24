@@ -38,8 +38,7 @@ export default function LoginPage() {
     const handleGuestLogin = () => {
         setGuestLoading(true);
         enterGuestMode();
-        router.push("/");
-        router.refresh();
+        window.location.href = "/";
     };
 
     return (
